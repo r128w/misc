@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chatroom.mp4</title>
+
+    <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+
+    <!-- <script src="main.js"></script> -->
+     
+</head>
+
+<body style="background-color: #222;color:#fff">
+    
+    <h1>yo (dawg)</h1>
+
+    <!-- <button onclick="jerry()">jerry</button> -->
+
+
+    <div style="position:absolute;bottom:0px;left:0px;width:100%;background-color:#333;margin:0px;height:20%">
+        <div style="margin:auto;width:80%;background-color: #444;height:50%;top:20%;position:relative">
+            <div contenteditable="true" style="background-color:#333;width:83%;height:80%;top:10%;left:1%;position:absolute;font-size:large"></div>
+            <button style="height:100%;font-size:large;right:0px;top:0px;position:absolute;width:15%">Send</button>
+        </div>
+    </div>
+
+
+    <!--ids are all of the form [identifier string][index], such that on init each client picks the lowest available index-->
+    <!--each client maintains connections with 8 others, four indeces above and four below-->
+    <!--messages propogate through the network, checked by timestamp to avoid infinite loops-->
+    <!--if a gap of four indeces emerges, the network becomes separated. this can be avoided by infrequently reassigning ids to the lowest available index, filling the holes-->
+
+
+</body>
+
+</html>
