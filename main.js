@@ -8,8 +8,6 @@ var establishFlag = false;
 
 var _index = 0;
 
-
-
 async function establishPeer(index){// recursion (lmao)
 
     selfpeer = new Peer(mainID+index);
@@ -37,34 +35,6 @@ async function establishPeer(index){// recursion (lmao)
         }else{console.log('peer init error: ' + err);}
     });
 
-    // async function checkFlag(){// recursive recursion - might balloon quickly, but 100 used ids * 100 seconds = only roughly 2.5k calls (and this is very large scale)
-    //     if(establishFlag==false){
-    //         // console.log("flag ping");
-    //         return await setTimeout(checkFlag, 2000);// arbitrary delay
-    //     }else{
-    //         if(selfpeer.id.replace(mainID, "") == `${index}`){// such that this connection is only used once (running .on multiple times just stacks the functions)
-    //             console.log("yuh - initialized");
-    //             selfpeer.on('connection', function(c){
-    //                 console.log('connection gotten');
-                    
-    //                 for(var i = 0;i<conns.length;i++){// no repeat connections in conns
-    //                     if(conns[i].peer == c.peer){
-    //                         return;
-    //                     }
-    //                 }
-    //                 newConnIndex = conns.push(c) - 1;// add it to the list
-    //                 conns[newConnIndex].on('data', function(data){
-    //                     console.log("rec: " + data);// temp
-    //                 });
-            
-    //             });
-    //             _index = index;
-    //         }
-    //         return;
-    //     }
-    // }
-    // return await checkFlag();
-
     while(establishFlag == false){
         await delay(1000)
     }
@@ -82,6 +52,9 @@ async function establishPeer(index){// recursion (lmao)
             }
             newConnIndex = conns.push(c) - 1;// add it to the list
             conns[newConnIndex].on('data', function(data){receiveMessage(data);});
+            conns[newConnIndex].on('close', function(){
+                console.log("lost connection");
+            });
 
         });
         _index = index;
@@ -94,13 +67,36 @@ async function establishPeer(index){// recursion (lmao)
 function delay(ms){return new Promise(resolve => setTimeout(resolve, ms));}
 
 function receiveMessage(msg){
+    if(msg == ""){return;}
+    
     console.log("rec: " + msg);
     // alert(msg);
+    // var sampleMessageBox = document.getElementById("samplebox");
+    var newBox = document.getElementById('samplebox').cloneNode(true);// deep clone (for all internals)
+    newBox.classList.remove('hidden');
+    newBox.innerHTML = newBox.innerHTML.replace("[[[message]]]", msg["message"]);
+    newBox.innerHTML = newBox.innerHTML.replace("[[[username]]]", msg["username"]);
+    newBox.innerHTML = newBox.innerHTML.replace("[[[timestamp]]]", "at " + ((Math.floor(msg["timestamp"]/1000))%10000));
+    document.getElementById('displaybox').appendChild(newBox);
+}
+
+function sendMessage(){
+    var toSend = {'message':document.getElementById('messagebox').innerHTML,'username':document.getElementById('usernamebox').innerText,'timestamp':Date.now()}
+    for(var i = 0;i<conns.length;i++){conns[i].send(toSend);}
+    receiveMessage(toSend);// temp
+    document.getElementById('messagebox').innerText = '';
 }
 
 var conns = [];
 
 async function init(){
+
+    document.getElementById('messagebox').addEventListener('keydown', function(ev){
+        if(ev.key=="Enter"&&ev.shiftKey==false){
+            ev.preventDefault();
+            sendMessage();
+        }
+    })
 
     await establishPeer(0);
     
@@ -128,6 +124,9 @@ async function establishConns(){
             console.log("connect to " + i);
             conns.push(selfpeer.connect(mainID + i));
             conns[i].on('data', function(data){receiveMessage(data);});
+            conns[i].on('close', function(){
+                console.log("lost connection");
+            });
         }
     }
 }
