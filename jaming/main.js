@@ -1,6 +1,7 @@
 
 window.onload = function(){
     document.getElementById('canvas').focus();// convenience
+
 }
 
 
@@ -148,10 +149,11 @@ const aiinput = function(){// player two, ai
         ((isRight && otherplayerx + otherplayervx * 20 + 300 < this.x)||// or if the player is 300px away from this in the attacking direction
         (!isRight && otherplayerx + otherplayervx * 20 - 300 > this.x))//false
     ){
-        // if attacking and player further from ball than 100px in attacking direction
+
+        // if attacking and player further from ball than 300px in attacking direction
         // jump to initiate pinch
         if(
-            (isRight && abs(otherplayerx-(bx-50))>100)||(!isRight && abs(otherplayerx-(bx+50)>100))
+            (isRight && abs(otherplayerx-(bx-150))>300)||(!isRight && abs(otherplayerx-(bx+150)>300))
         ){
             if(abs(this.x-desiredx)<100 && by+br==groundHeight){// if close enough to justify a jump, and the ball is grounded
                 if(this.y+this.r==groundHeight){// jump
@@ -274,6 +276,16 @@ const aiinput = function(){// player two, ai
         }
     }
 
+}
+const funnyinput = function(){
+    this.w=false;this.s=false;this.a=false;this.d=false;
+    if(this.isGrounded){
+        this.w= true;
+    }
+    if(!this.isGrounded&&this.y+this.r<groundHeight){
+        this.s=true;
+    }
+    this.a=true;
 }
 const wasdinput = function(){// player one, uses wasde
     this.w = binput[87];
