@@ -357,7 +357,10 @@ var players = [Player(0,starts[0],wasdinput),Player(1,starts[1],arrowsinput)];
                 updated=false;
             }
 
-            background(25);
+            // background(25,25,25,10);
+            fill(25,25,25,180);
+            rect(-10,-10,660,380);
+            noStroke();
 
             bx+=bvx*speedFactor;by+=bvy*speedFactor;
             bvy+=0.3*speedFactor;
