@@ -16,7 +16,7 @@
 <body style="background-color: #222;color:#fff">
   
 
-    <div style="background-color: #111;width:15%;padding:15px;margin-top:10px;border-radius:10px">
+    <div style="background-color: #111;width:15%;padding:15px;margin-top:10px;border-radius:10px;float:left">
 
         <p style="margin-top:0px" class ="a">Player 1:</p>
         <select id="player1select" oninput="modifyPlayer();" class="b">
@@ -47,8 +47,10 @@
 
     </div>
 
-    
-    <canvas id="canvas" style="float:right"></canvas>
+    <br>
+    <canvas id="canvas" style="margin-right:auto;margin-left:auto;width:fit-content;padding:0px;display:block"></canvas>
+    <br>
+    <p style="margin:auto;width:fit-content;color:#aaa">The canvas must be focused (ie, click on it) to register inputs</p>
     
 
     <script src="main.js"></script>
