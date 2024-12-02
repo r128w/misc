@@ -42,7 +42,7 @@ var sketchProc = function(processingInstance) {
                 e: false,
                 hx: respawnLoc.x,
                 hy: respawnLoc.y,
-                self: id,
+                id: id,
                 x: 320,
                 y: 180,
                 r: 15,
@@ -127,11 +127,11 @@ const aiinput = function(){// player two, ai
     // code to decide whether w,a,s,d should be pressed
     //e is deprecated
 
-    var otherplayerx = 0;
-    var otherplayervx = 0;
+    var otherplayerx = -1000;
+    var otherplayervx;
     for(var i = 0; i < players.length;i++){
         if(players[i].id!=this.id){
-            if(abs(otherplayerx-this.x)<abs(this.x-players[i].x)){
+            if(abs(players[i].x-this.x)<abs(this.x-otherplayerx)){
                 otherplayerx=players[i].x;
                 otherplayervx=players[i].vx;
             }
