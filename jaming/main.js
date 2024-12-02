@@ -86,7 +86,9 @@ var sketchProc = function(processingInstance) {
                         if(this.w){if(this.y+this.r!=groundHeight){this.isGrounded=false;this.vx+=horizontalFactor*(abs(this.vx)+2);}this.vy-=9;this.y-=1;}
                     }
                     if(this.s){
-                        this.vy+=10.5;// why not
+                        if(this.vy < 12){
+                            this.vy+=10.5;// why not
+                        }
                         this.isGrounded=false;
                     }
 
@@ -194,13 +196,17 @@ const aiinput = function(){// player two, ai
         if(// if the linear extension of current x according to vx is within a tolerance of a quarter radius of the target point
             abs((bx + bvx*((this.y-by)/14) + (isRight? br : -br))-(// if vx 3 in that direction would hit well
                 this.x + (this.vx < 0? -4:4)*((this.y-by)/14)
-            ))<br/4 &&
+            ))<br/4+this.r/4 &&
             ((isRight && bx < this.x)||(!isRight && bx > this.x))// ball is on attacking side
         ){
-            if(this.vy < 12){// avoid tripleslam or whatever
             this.s=true;// slam
-            }
         }
+    }
+
+    if(((this.y + 10*this.vy + 40 < by + 10*bvy || by + bvy*10 < this.y + 10*this.vy - 200) || abs(this.x-bx) > 30*(this.vx+bvx))&&(!this.isGrounded&&this.y < groundHeight-100)){
+
+            this.s=true;// no floating around, we stay on the ground in this bitch
+
     }
     
     // if in air, and ball is diagonally to the up-attack dir, double jump into ball
