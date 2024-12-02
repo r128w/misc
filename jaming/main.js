@@ -318,7 +318,7 @@ var players = [Player(0,starts[0],wasdinput),Player(1,starts[1],arrowsinput)];
 
             if(updated){// if selection has been changed
 
-                speedFactor = Number(document.getElementById('speedbox').innerText);
+                speedFactor = document.getElementById('speedslider').value / 50;
 
                 switch(document.getElementById("player1select").selectedIndex){
                     default:break;
@@ -331,6 +331,9 @@ var players = [Player(0,starts[0],wasdinput),Player(1,starts[1],arrowsinput)];
                     case 2:
                         players[0] = Player(0, starts[0], aiinput);
                         break;
+                    // case 3:
+                    //     players[0] = Player(0, starts[0], easyaiinput);
+                    //     break;
                 }
 
                 switch(document.getElementById("player2select").selectedIndex){
@@ -344,6 +347,9 @@ var players = [Player(0,starts[0],wasdinput),Player(1,starts[1],arrowsinput)];
                     case 2:
                         players[1] = Player(1, starts[1], aiinput);
                         break;
+                    // case 3:
+                    //     players[1] = Player(1, starts[1], easyaiinput);
+                    //     break;
                 }
 
                 init();
@@ -414,4 +420,8 @@ modifyPlayer = function(){
 }
 changeSpeedFactor = function(){
     updated = true;
+    if(document.getElementById('speeddisplay').innerText != document.getElementById('speedslider').value/50){
+    document.getElementById('speeddisplay').innerText=document.getElementById('speedslider').value/50;
+    if(document.getElementById('speedslider').value%50==0){document.getElementById('speeddisplay').innerText+=".0";}// give it a .0 for effect
+    }
 }
