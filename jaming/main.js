@@ -1,8 +1,6 @@
 
 window.onload = function(){
     document.getElementById('canvas').focus();// convenience
-
-    document.getElementById('canvas').style = "position:absolute;left:" + ((window.innerWidth-640)/2) + "px";
 }
 
 
