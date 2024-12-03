@@ -279,6 +279,11 @@ const aiinput = function(){// player two, ai
             }
         }
 
+        if(Math.random() < 0.05 * Math.max(0, 3-this.extra.difficulty)){this.a=false;}// randomness for ai
+        if(Math.random() < 0.05 * Math.max(0, 3-this.extra.difficulty)){this.d=false;}
+        if(Math.random() < 0.05 * Math.max(0, 3-this.extra.difficulty)){this.s=false;}
+        if(Math.random() < 0.05 * Math.max(0, 3-this.extra.difficulty)){this.w=false;}
+
     }
 
     
@@ -303,6 +308,8 @@ const aiinput = function(){// player two, ai
         this.s = false;// no slam
         if(this.isGrounded && this.y+this.r < groundHeight){this.w=false;}// no double jump
     }
+
+
 
 }
 // const funnyinput = function(){
