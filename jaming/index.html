@@ -13,25 +13,27 @@
     </style>
 </head>
 
-<body style="background-color: #222;color:#fff">
+<body style="background-color: #222;color:#fff;font-family:monospace">
   
 
-    <div style="background-color: #111;width:15%;padding:15px;margin-top:10px;border-radius:10px;float:left">
+    <div style="background-color: #111;width:20%;padding:15px;margin-top:10px;border-radius:10px;float:left">
 
         <p style="margin-top:0px" class ="a">Player 1:</p>
         <select id="player1select" oninput="modifyPlayer();" class="b">
             <option>WASD</option>
             <option>Arrows</option>
-            <option>AI</option>
-            <!-- <option>Easy AI</option> -->
+            <option>AI - Easy</option>
+            <option>AI - Medium</option>
+            <option>AI - Hard</option>
         </select>
         <br>
         <p class="a">Player 2:</p>
         <select id="player2select" oninput="modifyPlayer();" class="b">
             <option>WASD</option>
             <option>Arrows</option>
-            <option>AI</option>
-            <!-- <option>Easy AI</option> -->
+            <option>AI - Easy</option>
+            <option>AI - Medium</option>
+            <option>AI - Hard</option>
         </select>
 
         <script>document.getElementById('player2select').selectedIndex = 1</script>
@@ -45,6 +47,21 @@
         onkeyup="document.getElementById('speedslider').value=(Number(this.innerText*50));changeSpeedFactor()">1.0</div>
 
 
+        <h3>To play:</h3>
+        <p style="font-size:small">
+        Hit the ball into the opposing side<br>
+        Player 1: Red<br>
+        Player 2: Yellow<br>
+        </p>
+
+        <h3>Controls:</h3>
+        <p style="font-size:small">
+        Left/Right - Move l/r<br>
+        Up - Jump<br>
+        Up + (L/R/none) - Airjump<br>
+        Down - Slam<br>
+        </p>
+
     </div>
 
     <br>
@@ -53,9 +70,10 @@
     <p style="margin:auto;width:fit-content;color:#aaa">The canvas must be focused (ie, click on it) to register inputs</p>
     
 
-    <script src="main.js"></script>
 
-    
+
+
+    <script src="main.js"></script>
 
     
 </body>
