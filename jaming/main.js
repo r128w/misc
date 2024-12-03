@@ -32,7 +32,7 @@ var sketchProc = function(processingInstance) {
 
         var speedFactor = 1;
 
-        var Player = function(id, respawnLoc, getInputs){
+        var Player = function(id, respawnLoc, getInputs, options = {difficulty:0}){
             return {
                 w: false,
                 a: false,
@@ -48,6 +48,7 @@ var sketchProc = function(processingInstance) {
                 vx: 0,
                 vy: 0,
                 isGrounded: false,
+                extra: options,
                 airTimer: 0,
                 update: function(){
                     this.x+=this.vx * speedFactor;
@@ -205,7 +206,7 @@ const aiinput = function(){// player two, ai
 
     if(((this.y + 10*this.vy + 40 < by + 10*bvy || by + bvy*10 < this.y + 10*this.vy - 200) || abs(this.x-bx) > 30*(this.vx+bvx))&&(!this.isGrounded&&this.y < groundHeight-100)){
 
-            this.s=true;// no floating around, we stay on the ground in this bitch
+            this.s=true;// no floating around, we stay on the ground in this zone
 
     }
     
@@ -240,6 +241,15 @@ const aiinput = function(){// player two, ai
         desiredx=bx;
     }
 
+    // if ball is above and to the left (ie, right after a challenge), jump into it
+    if(
+        ((isRight && bx < this.x && this.x < bx + 20)||(!isRight && bx > this.x && this.x > bx - 20))&&
+        (by+20 < this.y && this.y < by+30)
+    ){
+        this.w = true;
+        desiredx = bx;
+    }
+
     if(// if its joever, attempt screenwrap
         (abs(otherplayerx-bx) < abs(this.x -  bx))&&// if the player is closer to the ball and youre not in the way to defend
         ((isRight && otherplayerx > this.x) ||
@@ -250,12 +260,25 @@ const aiinput = function(){// player two, ai
 
 
     if(abs(this.x-desiredx)>5){// only go if not within 5 px, to avoid jittering
+
         if(desiredx < this.x){
             this.a=true;
         }
         if(desiredx > this.x){
             this.d=true;
         }
+
+        // wavedash (actually insane, not fair at all)
+        if(this.extra.difficulty > 1){
+            if(abs(this.x-desiredx) > 200 && abs(otherplayerx-bx) > 80){// if far away, and player is not in balling range, wavedash
+                if(this.isGrounded){
+                    this.w = true;
+                }else if(this.y+this.r < groundHeight-10 && !this.isGrounded){
+                    this.s = true;
+                }
+            }
+        }
+
     }
 
     
@@ -266,7 +289,6 @@ const aiinput = function(){// player two, ai
         if(isRight){d=false;}else{a=false;}// cancel back to defense movement
         // console.log("cancelled to safety")
     }
-
     if(// jump if would otherwise push the ball backwards
         (isRight && bx > this.x && bx + 10*bvx < this.x + 100 && by+br > groundHeight-10) ||
         (!isRight && bx < this.x && bx + 10*bvx < this.x - 100 && by+br > groundHeight-10)
@@ -276,17 +298,22 @@ const aiinput = function(){// player two, ai
         }
     }
 
-}
-const funnyinput = function(){
-    this.w=false;this.s=false;this.a=false;this.d=false;
-    if(this.isGrounded){
-        this.w= true;
+
+    if(this.extra.difficulty == 0){
+        this.s = false;// no slam
+        if(this.isGrounded && this.y+this.r < groundHeight){this.w=false;}// no double jump
     }
-    if(!this.isGrounded&&this.y+this.r<groundHeight){
-        this.s=true;
-    }
-    this.a=true;
+
 }
+// const funnyinput = function(){
+//     if(abs(this.x-bx) > 200 && abs(otherplayerx-bx) > 80){// if far away, and player is not in balling range, wavedash
+//         if(this.isGrounded){
+//             this.w = true;
+//         }else if(this.y+this.r < groundHeight-10 && !this.isGrounded){
+//             this.s = true;
+//         }
+//     }
+// }
 const wasdinput = function(){// player one, uses wasde
     this.w = binput[87];
     this.a = ainput[65];
@@ -341,9 +368,13 @@ var players = [Player(0,starts[0],wasdinput),Player(1,starts[1],arrowsinput)];
                     case 2:
                         players[0] = Player(0, starts[0], aiinput);
                         break;
-                    // case 3:
-                    //     players[0] = Player(0, starts[0], easyaiinput);
-                    //     break;
+                    case 3:
+                        players[0] = Player(0, starts[0], aiinput, {difficulty:1});
+                        break;
+                    case 4:
+                        players[0] = Player(0, starts[0], aiinput, {difficulty:2});
+                        break;
+                        
                 }
 
                 switch(document.getElementById("player2select").selectedIndex){
@@ -357,9 +388,12 @@ var players = [Player(0,starts[0],wasdinput),Player(1,starts[1],arrowsinput)];
                     case 2:
                         players[1] = Player(1, starts[1], aiinput);
                         break;
-                    // case 3:
-                    //     players[1] = Player(1, starts[1], easyaiinput);
-                    //     break;
+                    case 3:
+                        players[1] = Player(1, starts[1], aiinput, {difficulty:1});
+                        break;
+                    case 4:
+                        players[1] = Player(1, starts[1], aiinput, {difficulty:2});
+                        break;
                 }
 
                 init();
