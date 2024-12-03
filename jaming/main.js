@@ -154,7 +154,7 @@ const aiinput = function(){// player two, ai
         // if attacking and player further from ball than 300px in attacking direction
         // jump to initiate pinch
         if(
-            (isRight && abs(otherplayerx-(bx-150))>300)||(!isRight && abs(otherplayerx-(bx+150)>300))
+            (isRight && abs(otherplayerx-(bx-150))>300)||(!isRight && abs(otherplayerx-(bx+150)>300)) && this.extra.difficulty > 0 // only on medium and higher
         ){
             if(abs(this.x-desiredx)<100 && by+br==groundHeight){// if close enough to justify a jump, and the ball is grounded
                 if(this.y+this.r==groundHeight){// jump
@@ -204,7 +204,11 @@ const aiinput = function(){// player two, ai
         }
     }
 
-    if(((this.y + 10*this.vy + 40 < by + 10*bvy || by + bvy*10 < this.y + 10*this.vy - 200) || abs(this.x-bx) > 30*(this.vx+bvx))&&(!this.isGrounded&&this.y < groundHeight-100)){
+    if(
+        ((this.y + 10*this.vy + 40 < by + 10*bvy || by + bvy*10 < this.y + 10*this.vy - 200) 
+        || abs(this.x-bx) > 30*(this.vx+bvx)) && 
+        (!this.isGrounded&&this.y < groundHeight-100)
+    ){
 
             this.s=true;// no floating around, we stay on the ground in this zone
 
@@ -253,9 +257,10 @@ const aiinput = function(){// player two, ai
     if(// if its joever, attempt screenwrap
         (abs(otherplayerx-bx) < abs(this.x -  bx))&&// if the player is closer to the ball and youre not in the way to defend
         ((isRight && otherplayerx > this.x) ||
-        (!isRight && otherplayerx < this.x))
+        (!isRight && otherplayerx < this.x)) &&
+        this.extra.difficulty > 0// only for medium and above ai, easy doesnt attempt screenwrap
     ){// do a 180 to screenwrap
-        desiredx = (isRight? -100 : 800)
+        desiredx = (isRight? -50 : 690);// 50 offscreen (so wavedash works alright)
     }
 
 
