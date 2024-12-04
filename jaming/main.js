@@ -28,7 +28,9 @@ var sketchProc = function(processingInstance) {
         const pBMR = 0.2;//player ball mass ratio (0.2 = player moves 20% the required distance, ball moves 80%)
         const pMT = 0.1;//player momentum transfer
 
-        var pD = 0;// point differential (red +, yellow -)
+        var pD = 0;// point differential (red +, yellow -) (NOT p. Diddy)
+        var p1score = 0;
+        var p2score = 0;
 
         var speedFactor = 1;
 
@@ -410,6 +412,7 @@ var players = [Player(0,starts[0],wasdinput),Player(1,starts[1],arrowsinput)];
 
                 init();
                 pD=0;
+                p1score=0;p2score=0;
                 updated=false;
             }
 
@@ -455,10 +458,13 @@ var players = [Player(0,starts[0],wasdinput),Player(1,starts[1],arrowsinput)];
             fill(255);
             ellipse(bx,by,br*2,br*2);
 
-            if(bx < 0){pD--;init();}
-            if(bx > 640){pD++;init();}
+            if(bx < 0){pD--;p2score++;init();}
+            if(bx > 640){pD++;p1score++;init();}
 
-            text(pD, 0, 20, 640, 100);
+            // text("vs", 0, 20, 640, 100);
+            fill(100);
+            text(p1score, 0, 20, 100, 100);
+            text(p2score, 540, 20, 100, 100);
 
 
             binput = [];//reset
