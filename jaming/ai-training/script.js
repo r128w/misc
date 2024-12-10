@@ -9,11 +9,30 @@ function modifyList(input, amount){
         }else{
             // console.log("num")
             // console.log(input[i])
-            input[i] *= 1 + (Math.random()*amount - amount/2);
+            if(Math.random()<(amount>1?0.1:0.01)){
+            input[i] += (Math.random()*amount - amount/2);
+            input[i] = Math.atan(input[i])
+            }
             // console.log(input[i])
         }
     }
     return input;
+}
+
+function averageList(input){
+    sum = 0;
+    for(var i = 0; i < input.length;i++){
+        if(typeof input[i] == 'object'){
+            // console.log("objec")
+            sum += averageList(input[i]);
+        }else{
+            // console.log("num")
+            // console.log(input[i])
+            sum+=input[i];
+            // console.log(input[i])
+        }
+    }
+    return sum / 100;// close neough to av, dont actually care
 }
 
 function copy(object){
@@ -102,34 +121,36 @@ function generateRandomWeights(){
 
     // weightset:
     //  weights 1: 6 x (13 + bias)
-    //  weights 2: 6 x (6 + bias)
+    //  weights 2: 6 x (6 + bias) (removed)
     //  weights 3: 4 x (6 + bias)
     var output = [];
     var toAdd = [];
     for(var i = 0; i<6;i++){
         toAddi = [];
         for(var ii = 0; ii < 14; ii ++){
-            toAddi.push(Math.random()-0.5);
+            // toAddi.push(Math.random()-0.5);
+            toAddi.push(0);
         }
         toAdd.push(toAddi);
     }
     output.push(toAdd);
 
-    toAdd = [];
-    for(var i = 0; i<6;i++){
-        toAddi = [];
-        for(var ii = 0; ii < 7; ii ++){
-            toAddi.push(Math.random()-0.5);
-        }
-        toAdd.push(toAddi);
-    }
-    output.push(toAdd);
+    // toAdd = []; // extra layer, prob not needed
+    // for(var i = 0; i<6;i++){
+    //     toAddi = [];
+    //     for(var ii = 0; ii < 7; ii ++){
+    //         toAddi.push(Math.random()-0.5);
+    //     }
+    //     toAdd.push(toAddi);
+    // }
+    // output.push(toAdd);
 
     toAdd = [];
     for(var i = 0; i<4;i++){
         toAddi = [];
         for(var ii = 0; ii < 7; ii ++){
-            toAddi.push(Math.random()-0.5);
+            // toAddi.push(Math.random()-0.5);
+            toAddi.push(0);
         }
         toAdd.push(toAddi);
     }
@@ -472,9 +493,15 @@ const nninput = function(){// neural net input
     inputs.push(this.vx * (isRight?-1:1));
     inputs.push(this.vy);
     inputs.push(this.isGrounded?1:0);
-    inputs.push(
-        isRight?(this.x-bx)/100:(bx-this.x)/100
-    );
+    if(abs(this.x-bx)>width/2){// respect wraparound
+        inputs.push(-(width-(
+            isRight?(this.x-bx):(bx-this.x)
+        ))/100);
+    }else{
+        inputs.push(
+            isRight?(this.x-bx)/100:(bx-this.x)/100
+        );
+    }   
     inputs.push((this.y - by)/100);
     inputs.push(bvx * (isRight?-1:1));
     inputs.push(bvy);
@@ -499,6 +526,19 @@ const nninput = function(){// neural net input
     inputs.push(otherplayervx * (isRight?-1:1));
     inputs.push(otherplayervy);
 
+    if(halt){console.log(inputs)
+        console.log(inputs[5])
+    }
+
+    const outputs = inputToOutput(inputs, this.extra.weights);
+
+    this.w=outputs[0];
+    this.a=isRight?outputs[1]:outputs[3];
+    this.s=outputs[2];
+    this.d=isRight?outputs[3]:outputs[1];
+
+    // console.log(outputs)
+
 
 }
 
@@ -519,8 +559,6 @@ function init(){
         players[i].isGrounded = false;
     }
     bvx = 0;bvy = -5;bx=320;by=250;
-    p1score=0;// modified
-    p2score=0;
 }
 
 
@@ -541,12 +579,10 @@ function runFrame(){
             if(bcol==players.length&&bcol!=1){bvy=-5*speedFactor;bvx=(320-bx)*0.02*speedFactor;}
 
 
-            if(bx < 0){pD--;p2score++;}// removed init() call, caused issues
-            if(bx > 640){pD++;p1score++;}
+            if(bx < 0){pD--;p2score++;init();}// removed init() call, caused issues (undid)
+            if(bx > 640){pD++;p1score++;init();}
 
 
-
-            binput = [];//reset
             bcol = 0;
 
             for(var i = 0;i<players.length;i++){
@@ -570,47 +606,9 @@ function runFrame(){
 
         };
 
-// var sketchProc = function(processingInstance) {
-//     with (processingInstance) {
-//        size(640, 360);
-//        frameRate(60);
+// players = [Player(0,starts[0],aiinput,{difficulty:1}),
+// Player(1, starts[1],nninput, {weights:generateRandomWeights()})];
 
-//         draw = function(){     
-
-//             // background(25,25,25,10);
-//             fill(25,25,25,180);
-//             rect(-10,-10,660,380);
-//             noStroke();
-
-//             runFrame();
-
-
-//             // text("vs", 0, 20, 640, 100);
-//             fill(100);
-//             text(p1score, 0, 20, 100, 100);
-//             text(p2score, 540, 20, 100, 100);
-
-
-//             fill(255);
-//             ellipse(bx,by,br*2,br*2);
-
-//             for(var i = 0;i<players.length;i++){
-
-
-//                 fill((i+1)*255, i*255, (i-2)*255);
-//                 ellipse(players[i].x, players[i].y, players[i].r*2, players[i].r*2);
-
-//             }
-
-//         }
-       
-//     }};
-
-   // Get the canvas that Processing-js will use
-
-//    var canvas = document.getElementById("canvas");
-   // Pass the function sketchProc (defined in myCode.js) to Processing's constructor.
-// var processingInstance = new Processing(canvas, sketchProc);
 
 
 function testRelativeFitness(player1, player2){
@@ -623,27 +621,238 @@ function testRelativeFitness(player1, player2){
         frames++;
         runFrame();
     }
-    if(p1score > 0){return 1;}
-    if(p2score > 0){return 2;}
+    if(p1score > 0){p1score=0;return 1;}
+    if(p2score > 0){p2score=0;return 2;}
     return -1;// if neither won
 }
 
-var onewins = 0;
-var twowins = 0;
-var draws = 0;
-const start = Date.now();
-for(var i = 0; i < 1000; i ++){
-    var result = testRelativeFitness(
-        Player(0,starts[0],aiinput,{difficulty:1}),
-        Player(1,starts[1],aiinput, {difficulty:0})
-    );
-    switch(result){
-        case 1:onewins++;break;
-        case 2:twowins++;break;
-        case -1:draws++;break;
+function getFitnessAtFrame(player){
+    const isRight = (player.hx > 320);
+    var fitness = 0;
+    if(player.y < groundHeight-30){
+        fitness+=0.05*(abs(player.vy));
+        fitness+=0.1*(1 -0.05*abs(player.x-bx));
     }
+
+    // fitness+=0.3*(1-0.05*abs(players[id].x-bx));
+    // fitness += -0.1*abs(player.x-bx);// get to ball
+    const closerWrap = abs(player.x-bx) > width/2
+    const distToBall = (closerWrap ? width - abs(player.x-bx) : abs(player.x-bx));// wrap around distance (to promote wraparound)
+    fitness -= 0.4*distToBall;
+
+    if((isRight?player.x > bx:player.x<bx)){fitness+=50;}// assuming isRight, which is true as of now
+    if(player.d){fitness+=(isRight?2:10);}
+    if(player.a){fitness+=(isRight?10:2);}
+    fitness += ((isRight?width-bx:bx) / 20);
+    if((isRight?player.x > bx:player.x<bx)){
+        // fitness+=3*(closerWrap?-1:1)*(player.vx);
+        if((isRight && player.vx < 0)||(!isRight && player.vx > 0)){
+            fitness+=10*abs(player.vx);
+        }else{
+            fitness-=10*abs(player.vx);
+        }
+    }
+
+    return fitness;
 }
-console.log("ran w " + (1/((Date.now()-start)/1000)) + " games per ms");
-console.log(onewins)
-console.log(twowins)
-console.log(draws)
+
+function testFitness(weights){
+    players = [
+        (Math.random() < 0.2 ? 
+        Player(0, starts[0], aiinput, {difficulty:0}):
+        Player(0, starts[0], function(){
+            this.a=false;this.d=false;this.w=false;this.s=false;// stationary
+        }, {difficulty:0})
+        ),
+        Player(1, starts[1], nninput, {weights:weights})
+    ];
+
+    var fitness = 0;
+
+    init();
+    var frames = 0;
+    const id = 1;
+    while(frames < 1000){
+        frames++;
+        runFrame();
+        fitness+=getFitnessAtFrame(players[id]);
+
+        if(Math.random()<0.01){
+            by = Math.random()*groundHeight;
+            bx = Math.random()*width;
+            players[0].x = Math.random()*width;
+            players[0].y = Math.random()*groundHeight;
+            players[1].x = Math.random()*width;
+            players[1].y = Math.random()*groundHeight;
+
+        }
+
+    }
+    fitness-=5000*p1score;
+    fitness+=5000*p2score;
+    p1score=0;
+    p2score=0;
+    return fitness;
+}
+
+var halt = false;
+function haltNow(){halt=true;}
+
+async function trainFor(iterations, starting){
+    const start = Date.now();
+    var currentWeights = starting;
+    var currFitness = -999999;
+    for(var i = 0; i < iterations; i ++){
+        if(halt){break;}
+        if(i%500==0){console.log(`${i} iterations in ${Date.now()-start} ms`);}
+        if((i+1)%5000==0){console.log(`checkpoint ${(i+1)/5000}: `);console.log(JSON.stringify(currentWeights))}
+
+        if(i%2==0){
+            const mod = 0.3;
+            var p1w = modifyList(currentWeights, mod);
+            var p2w = modifyList(currentWeights, mod);
+            var result = testRelativeFitness(
+                Player(0, starts[0], nninput, {weights:p1w}),
+                Player(1, starts[1], nninput, {weights:p2w})
+            );
+            if(result == 1){currentWeights = p1w;continue;}
+            if(result == 2){currentWeights = p2w;continue;}
+            // currentWeights = modifyList(currentWeights, mod/2);//lil smt smt
+            // currFitness = testFitness(currentWeights);// "get real"
+        }else{
+
+            const mod = (0.3)
+            var w1 = modifyList(currentWeights, mod);
+            var thisFit = testFitness(w1);
+            if(thisFit > currFitness){
+                currentWeights=w1;
+                currFitness = thisFit;
+            }else{
+                currFitness-=100;// so an unrealistic lucky run dont stop progress forever
+            }
+
+        }
+
+    }
+    console.log("trained in " + (Date.now()-start) + " ms");
+    return currentWeights;
+}
+
+const wasdplayer = Player(0, starts[0], function(){
+    this.w = ainput[87];
+    // this.w = true;
+    this.a = ainput[65];
+    this.d = ainput[68];
+    this.s = ainput[83];
+    ainput[87]=false;
+    ainput[83]=false;
+    // console.log((bx-this.x)/100)
+    });
+
+async function train(){
+    // players=[
+    players = [Player(0, starts[0], function(){
+    this.w = ainput[87];
+    // this.w = true;
+    this.a = ainput[65];
+    this.d = ainput[68];
+    this.s = ainput[83];
+    ainput[87]=false;
+    ainput[83]=false;
+    }, {difficulty:0}),
+    Player(1, starts[1], nninput, {weights:await trainFor(5000, generateRandomWeights())})]
+}
+
+var ainput = [];
+
+function duplicate(){
+    players[0] = Player(0, starts[0], nninput,
+        {weights:modifyList(players[1].extra.weights, 0.1)}
+    );
+}
+
+function ai(){
+    players[0] = Player(0, starts[0], aiinput, {difficulty:0})
+}
+
+function load(weights){
+    players = 
+    [
+        Player(0, starts[0], function(){
+            this.w = ainput[87];
+            // this.w = true;
+            this.a = ainput[65];
+            this.d = ainput[68];
+            this.s = ainput[83];
+            ainput[87]=false;
+            ainput[83]=false;
+            }, {difficulty:0}),
+            Player(1, starts[1], nninput, {weights:Array.from(weights)})  
+    ]
+}
+
+async function startCanvas(){
+    // players[0]=Player(0,starts[0],aiinput,{difficulty:0})
+    var sketchProc = function(processingInstance) {
+        with (processingInstance) {
+        size(640, 360);
+        frameRate(60);
+
+        init();
+
+        keyPressed = function(){
+            ainput[keyCode] = true;
+            // console.log(keyCode)
+        };
+        keyReleased = function(){
+            ainput[keyCode] = false;
+
+            // console.log(keyCode)
+        };
+
+        console.log(averageList(players[1].extra.weights))
+
+            draw = function(){     
+
+                console.log("ai:"+getFitnessAtFrame(players[1]));
+                console.log("player:"+getFitnessAtFrame(players[0]));
+
+                // background(25,25,25,10);
+                fill(25,25,25,180);
+                rect(-10,-10,660,380);
+                noStroke();
+
+
+                runFrame();
+                // console.log("p2 inputs:")
+                // console.log("w "+players[1].w + " | a "+players[1].a + " | s "+players[1].s + " | d "+players[1].d)
+
+
+                // text("vs", 0, 20, 640, 100);
+                fill(100);
+                text(p1score, 0, 20, 100, 100);
+                text(p2score, 540, 20, 100, 100);
+
+
+                fill(255);
+                ellipse(bx,by,br*2,br*2);
+
+                for(var i = 0;i<players.length;i++){
+
+
+                    fill((i+1)*255, i*255, (i-2)*255);
+                    ellipse(players[i].x, players[i].y, players[i].r*2, players[i].r*2);
+
+                }
+
+
+            }
+        
+        }};
+
+    //Get the canvas that Processing-js will use
+
+    var canvas = document.getElementById("canvas");
+    //Pass the function sketchProc (defined in myCode.js) to Processing's constructor.
+    var processingInstance = new Processing(canvas, sketchProc);
+}
