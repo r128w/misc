@@ -209,10 +209,26 @@ const aiinput = function(){// player two, ai
     if(
         ((this.y + 10*this.vy + 40 < by + 10*bvy || by + bvy*10 < this.y + 10*this.vy - 200) 
         || abs(this.x-bx) > 30*(this.vx+bvx)) && 
-        (!this.isGrounded&&this.y < groundHeight-100)
+        (!this.isGrounded&&this.y < groundHeight-100)// if has no business in air
     ){
 
+        var willHit = false;
+        var tx = this.x;
+        var ty = this.y;
+        var tbx = bx;
+        var tby = by;
+        var tbvy = bvy;
+        for(var i = 0; i < 15;i++){
+            tx+=this.vx;ty=this.vy;tbx+=bvx;tby+=tbvy;
+            tbvy++;
+            if((tx-tbx)*(tx-tbx)+(ty-tby)*(ty-tby) < (br+this.r-3)*(br+this.r-3)){
+                willHit = true;
+            }
+        }// not if on collision course
+
+        if(!willHit){// avoid missing the ball
             this.s=true;// no floating around, we stay on the ground in this zone
+        }
 
     }
     
