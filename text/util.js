@@ -56,10 +56,6 @@ function nameGen(seed){
     return output
 }
 
-for(var i = 0; i < 100; i ++){
-    console.log(nameGen(i))
-}
-
 const words = {
     adj: {
         food:{
