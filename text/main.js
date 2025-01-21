@@ -128,7 +128,7 @@ function act(event){
     
     if(event == 8) {
         wantedness+=10;// you will never live this down
-        if(Math.random()<0.1) {
+        if(Math.random()<0.3) {
             lasttext += "Somehow, you escaped. The police have given up chasing you, for now.";
             event = -1;
         }
@@ -196,7 +196,7 @@ function act(event){
         case 5:
             if(wantedness > 5){// car chase survivor -> under arrest
                 currenttext="The officer stands by your door, and you lower the window. \n\"Buddy, you're wanted for resisting arrest and gross violation of traffic laws. Get out of the car, you're under arrest.\""
-                showOptions(["\"Ten-four.\"", ""])
+                showOptions(["\"Ten-four.\"", "I speed off onto the highway."], [9,8])
             }
             currenttext="The officer stands by your door, and you lower the window. \n\"Excuse me. Do you care to explain yourself? You're not exactly allowed to park here without reason.\""
             showOptions(["I explain, telling the truth.", "I make up an excuse that sounds plausible.", "I speed off onto the highway."],
@@ -227,6 +227,7 @@ function act(event){
             showOptions(["I keep driving (--energy).", "I glance at the police behind me (--energy).", "I practice explaining this incident to the judge (--energy).","I pull over."],
                 [dO, dO, `curEvent=${dO};lasttext+='You can\\\'t think of a good explanation.'`, 9])
             energy-=0.2;
+            distance-=3;
             break;
         case 9:
             currenttext="You fought the law, and the law won. You are not getting to Cleveland."
