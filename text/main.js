@@ -135,7 +135,7 @@ function act(event){
     }
     if(event == -1) {
         if(Math.random() > energy * 4) {// only happens at .25 energy or less
-            lasttext += " You've been dulled for a while now, and you can't focus. Suddenly, a tesla veers in front of you, no turn signal (Elon forgot to implement that), and everything goes black.";
+            lasttext += ` You've been dulled for a while now, and you can't focus. Suddenly, a tesla veers in front of you, no turn signal (Elon forgot to implement that), and everything goes black.`;
             event = 10;
         }
     }
@@ -237,7 +237,7 @@ function act(event){
             death();
             break;
         case 11:
-            currenttext="As you drive, a tesla ahead of you veers into your lane without warning. You're not ready.\nYou played it too risky, and died. You are not getting to Cleveland.";
+            currenttext=`As you drive, a ${pickRandom(words.noun.car)} ahead of you veers into your lane without warning. You're not ready.\nYou played it too risky, and died. You are not getting to Cleveland.`;
             death();
             break;
         case 12:
