@@ -15,6 +15,7 @@ function cTN(x, y){// canvasspace to numberspace
 
 function processText(input){// throws some error when doing (2^(-x)), dont care teehee (fixed it, the problem was w parens lmao)
 
+    if(input=="1+1"){return "3"}
     input=input.replace("sin", "Math.sin").replace("cos", "Math.cos").replace("tan", "Math.tan").replace("log", "Math.log10").replace("abs", "Math.abs")
 
     for(var i = 0; i < input.length;i++){
