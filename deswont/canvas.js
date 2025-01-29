@@ -3,6 +3,7 @@ const eqe = document.getElementById('eq-box')//equation element
 const eqc = document.getElementById('eq-color')//equation color
 const ctx = c.getContext("2d")
 var mS = 1;
+var tS = 1;
 
 c.addEventListener('mousemove', function(e){if(e.buttons==1){moveCam({x:e.movementX*-cv.sx,y:e.movementY*cv.sy})}})// drag to move
 c.addEventListener('wheel', function(e){const f=1+0.1*Math.atan(0.04*e.deltaY);moveCam({sx:f,sy:f});e.preventDefault();return false;},false)
@@ -30,9 +31,9 @@ function drawBacking(){
     const iY = Math.pow(10, scaleY)
 
     const startX = Math.floor((cv.xo-cv.sx*700)/iX);
-    const startY = Math.floor((cv.yo-cv.sy*500)/iY);
+    const startY = Math.floor((cv.yo-cv.sy*400)/iY);
 
-    for(var i = startX;i<startX+60;i++){// x axis gradation
+    for(var i = startX;i<startX+70;i++){// x axis gradation
         const a = nTC(i*iX, 0);
 
         ctx.fillStyle="#333"// guide lines
@@ -43,7 +44,7 @@ function drawBacking(){
         ctx.fillRect(a.x-1, a.y-6, 2, 12)
         ctx.fillText(Number((i*iX).toPrecision(11)), a.x+4,a.y+14)
     }
-    for(var i = startY;i<startY+40;i++){// y axis
+    for(var i = startY;i<startY+50;i++){// y axis
         const a = nTC(0, iY*i);
 
         ctx.fillStyle="#333"// guides
