@@ -24,6 +24,16 @@
                 <button onclick="by=Math.pow(1.5, -mS*0.33);moveCam({sx:by,sy:by})">+</button>
                 <button onclick="by=(mS*0.5)+1;moveCam({sx:by,sy:by})">-</button>
                 <input type="range" max="10"min="0" value="1" onchange="mS=this.value">
+                <br>
+                <p>Transformation of Function</p>
+                <button onclick="eqe.innerText=transform(eqe.innerText, {x:-tS});draw()"><</button>
+                <button onclick="eqe.innerText=transform(eqe.innerText, {y:tS});draw()">^</button>
+                <button onclick="eqe.innerText=transform(eqe.innerText, {y:-tS});draw()">v</button>
+                <button onclick="eqe.innerText=transform(eqe.innerText, {x:tS});draw()">></button>
+                <button onclick="eqe.innerText=transform(eqe.innerText, {sx:1/tS});draw()"><></button>
+                <button onclick="eqe.innerText=transform(eqe.innerText, {sy:tS});draw()">v^</button>
+                <input type="number" value="1" onchange="tS=this.value">
+
             </div>
             <!-- <div class="item barItem" style="width:fit-content;padding:10px">
                 <p>Translation wip</p>
