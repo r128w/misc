@@ -12,11 +12,10 @@ function cTN(x, y){// canvasspace to numberspace
     }
 }
 
-
 function processText(input){// throws some error when doing (2^(-x)), dont care teehee (fixed it, the problem was w parens lmao)
 
     if(input=="1+1"){return "3"}
-    input=input.replace("sin", "Math.sin").replace("cos", "Math.cos").replace("tan", "Math.tan").replace("log", "Math.log10").replace("abs", "Math.abs")
+    input=input.replace("sin", "Math.sin").replace("cos", "Math.cos").replace("tan", "Math.tan").replace("log", "Math.log10").replace("abs", "Math.abs").replace("sqrt", "Math.sqrt")
 
     for(var i = 0; i < input.length;i++){
         if(input[i]=="^"){
@@ -85,6 +84,8 @@ function isDigit(s){
     if(s=="7"){return true}
     if(s=="8"){return true}
     if(s=="9"){return true}
+    if(s=="."){return true}
+    return false
 }
 
 function evaluate(eq, at){
@@ -93,6 +94,87 @@ function evaluate(eq, at){
         return eval(eq);
     }catch(e){console.log("bad eq, " + e)}
 }
+
+function transform(eq, by){
+    if(by.x!=undefined){
+        for(var i = 0; i < eq.length; i++){
+            if(eq[i]=="x"){
+                i++;
+                if(eq[i]=="+"||eq[i]=="-"){
+                    var alrOffset = true;
+                    if(i-2>=0){if(eq[i-2]=="("){
+                        i++
+                        out = 0;
+                        while(eq[i]!=")"||i==eq.length){if(!isDigit(eq[i])){alrOffset=false;break}i++;out++}
+                        i-=out
+                        if(alrOffset){
+                            eq = eq.substring(0, i-3) + `(x+${Number(eq.substring(i-1, i+out))-by.x})` + eq.substring(i+out+1)
+                        }else{
+                            eq = eq.substring(0, i-1) + `(x+${-by.x})` + eq.substring(i);
+                        }
+                    }else{
+                        eq = eq.substring(0, i-1) + `(x+${-by.x})` + eq.substring(i);
+                    }}
+                }else{
+                    eq = eq.substring(0, i-1) + `(x+${-by.x})` + eq.substring(i);
+                }
+            }
+        }
+    }
+
+    if(by.y!=undefined){
+        var ina = 1;// in amount
+        while(isDigit(eq[eq.length-ina])){
+            ina++
+        }
+        if(eq[eq.length-ina]=="-"||eq[eq.length-ina]=="+"){
+            eq = eq.substring(0, eq.length-ina) + `+${Number(eq.substring(eq.length-ina))+Number(by.y)}`
+        }else{
+            eq+=`+${by.y}`
+        }
+    }
+
+    if(by.sx!=undefined){
+        for(var i = 0; i < eq.length;i++){
+            if(eq[i]=="x"){
+                if(i>0){
+                    if(eq[i-1]=="*"&&eq[i+1]!="^"){
+                        var o = 1;
+                        while(isDigit(eq[i-1-o])){
+                            if(i-1-o>0){o++}else{break}
+                        }
+                        eq = eq.substring(0, i-o) + (Number(eq.substring(i-o, i-1))*by.sx)+"*" + eq.substring(i)
+                        i++
+                        continue
+                    }
+                    eq = eq.substring(0, i) + `(${by.sx}*x)` + eq.substring(i+1)
+                    i+=3 + `${by.sx}`.length   
+                    continue
+                }
+                eq = eq.substring(0, i) + `(${by.sx}*x)` + eq.substring(i+1)
+                i+=3 + `${by.sx}`.length   
+            }
+        }
+    }
+
+    if(by.sy!=undefined){
+        var i = 0
+        while(isDigit(eq[i])){
+            if(i<eq.length-1){i++}else{break}
+        }
+        if(i<eq.length-2){
+            if(eq[i]=="*"&&eq[i+1]=="("&&eq[eq.length-1]==")"){
+                eq=Number(eq.substring(0, i))*by.sy + eq.substring(i)
+            }else{
+                eq=`${by.sy}*(${eq})`
+            }
+        }else{eq=`${by.sy}*(${eq})`}
+    }
+
+    eq = eq.replaceAll("+-", "-")
+    return eq;
+}
+
 
 // const test = "46^3*(25^3+(3+5)^7)"
 
