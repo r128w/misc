@@ -148,7 +148,7 @@ function act(event){
             distance--;
             currenttext="You're driving to Cleveland."
             var choices = [ "I drive, paying close attention (-energy).", "I drive, relaxed (+energy).", "I drive, scrolling reels (++energy).", "I make a stop by the side of the road."]
-            var consequences = ["energy-=0.04","energy+=0.1;curEvent=(Math.random()<0.04?11:-1)","energy+=0.4;curEvent=(Math.random()<0.3?11:-1)",3];
+            var consequences = ["energy-=0.04","energy+=0.1;curEvent=(Math.random()<0.03?11:-1)","energy+=0.4;curEvent=(Math.random()<0.3?11:-1)",3];
 
             if(Math.random()<0.2){
                 currenttext+=` You see a road sign: ${nameGen(distance)}, coming up soon. You could stop there.`;
