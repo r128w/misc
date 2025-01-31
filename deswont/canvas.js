@@ -74,6 +74,7 @@ function drawPoint(x, y){// takes numberspace
     ctx.fillRect(a.x-1, a.y-1, 2, 2)
 }
 
+
 function moveCam(by){
     if(by.x!=undefined){cv.xo+=by.x}
     if(by.y!=undefined){cv.yo+=by.y}
@@ -103,6 +104,7 @@ function plot(){
     ctx.moveTo(cs.x,cs.y)
     // ctx.moveTo(0,0)
     ctx.strokeStyle=eqc.value
+    ctx.lineWidth=2;
 
     var prev=0;
 
@@ -111,7 +113,7 @@ function plot(){
         const cs = nTC(ns.x, evaluate(eq,ns.x));// canvasspace of point
         // drawPoint(ns.x, evaluate(eq, ns.x))
 
-        if(Math.abs(cs.y-prev)>500&&(cs.y*prev)<0){
+        if((Math.abs(cs.y-prev)>500&&(cs.y*prev)<0)||(cs.y==undefined||prev==undefined)){
             ctx.moveTo(cs.x,cs.y)// jump if the pixel change is greater than 500 and sign change (to deal w asymmetrical asymptotes)
         }else{
             ctx.lineTo(cs.x,cs.y);// otherwise draw a smooth line
