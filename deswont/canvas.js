@@ -85,6 +85,7 @@ function moveCam(by){
 }
 
 function draw(){
+    if(cv.xo==Infinity||cv.yo==Infinity||cv.sx==Infinity||cv.sy==Infinity){alert("Congratulations! You beat Deswon't!");cv={xo:0,yo:0,sx:0.01,sy:0.01};}
     drawBacking()
     plot()
     eqe.style.color=eqc.value;
