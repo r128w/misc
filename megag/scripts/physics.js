@@ -74,7 +74,7 @@ class PhysicsObject {
             const grav = getGravity(this.x, this.y, planets[i].x, planets[i].y, planets[i].r * config.planetInfluenceFactor)
             this.vx += -grav.x * planets[i].mass
             this.vy += -grav.y * planets[i].mass
-            if(grav.dist<16+planets[i].r){this.landed = planets[i]}
+            if(grav.dist<this.r+planets[i].r){this.landed = planets[i]}
             // console.log(planets[i].mass)
         }
 
@@ -82,8 +82,8 @@ class PhysicsObject {
             const r2p = Math.atan2(this.y-this.landed.y, this.x-this.landed.x)//rot to planet
             this.rot = r2p
             this.vr=0;this.vx=0;this.vy=0
-            this.x=this.landed.x+(this.landed.r+14)*Math.cos(r2p)
-            this.y=this.landed.y+(this.landed.r+14)*Math.sin(r2p)
+            this.x=this.landed.x+(this.landed.r+this.r*0.9)*Math.cos(r2p)
+            this.y=this.landed.y+(this.landed.r+this.r*0.9)*Math.sin(r2p)
         }
 
     }

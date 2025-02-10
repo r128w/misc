@@ -1,13 +1,15 @@
 class Player extends PhysicsObject{
     constructor(x, y, r){
         super(x, y, r)
+        this.grabbed = null
     }
     iterate(){
         super.iterate()
 
         // this.vr*=0.95// angular drag for the weak
             
-        const rspeed = 0.004*Math.max(0, 1 - Math.abs(this.vr - 0.2))
+        const rspeed = 0.004*Math.max(0, 1 - Math.abs(this.vr - 0.2)) * (this.grabbed!=null?1-(0.63*Math.atan(0.1*this.grabbed.r)):1)
+
         if(input.a){this.vr-=rspeed}
         if(input.d){this.vr+=rspeed}
 
@@ -35,18 +37,59 @@ class Player extends PhysicsObject{
             if(input.w){
                 const r2p = Math.atan2(this.y-this.landed.y, this.x-this.landed.x)//rot to planet
                 const launchSpeed = ((input.s ? 2 : 10) * config.bigG*this.landed.r/(400) + 1.5);
-                // var dir = -(input.a-input.d)
+                var dir = -(input.a-input.d)
                 this.vx+=launchSpeed*Math.cos(r2p)
                 this.vy+=launchSpeed*Math.sin(r2p)
 
-                // this.vx+=0.2*launchSpeed*Math.cos(r2p+1.57)*dir
-                // this.vy+=0.2*launchSpeed*Math.sin(r2p+1.57)*dir
+                this.vx+=0.2*launchSpeed*Math.cos(r2p+1.57)*dir
+                this.vy+=0.2*launchSpeed*Math.sin(r2p+1.57)*dir
 
                 this.x+=launchSpeed*2*Math.cos(r2p)// get off the surface
                 this.y+=launchSpeed*2*Math.sin(r2p)
                 this.landed=null
                 // console.log(this.vx)
             }
+        }
+
+
+        if(this.grabbed != null){
+            this.grabbed.landed = null;
+            this.grabbed.x = this.x + (this.r+this.grabbed.r)*Math.cos(this.rot) - this.vx // correction terms for visual disconnect
+            this.grabbed.y = this.y + (this.r+this.grabbed.r)*Math.sin(this.rot) - this.vy
+            this.grabbed.vx = this.vx
+            this.grabbed.vy = this.vy
+            this.grabbed.rot = this.rot
+            this.grabbed.vr = this.vr
+        }
+
+    }
+    interact(){// called onkeyup by input.js
+        
+        if(this.grabbed == null){
+            // grab nearest physicsobject/platform
+
+            var nD = 32; // nearest dist is this (anything above wont be registered, this is the grab limit)
+            var nO = null; // nearest object
+
+            for(var i = 0; i < pobjects.length; i++){
+                if(pobjects[i] instanceof Player){continue}
+                if(!(pobjects[i] instanceof Platform)){continue}// might remove
+                const d = dist(this.x, this.y, pobjects[i].x, pobjects[i].y)
+                if(d < nD){nD = d;nO=pobjects[i]}
+            }
+
+            if(nO == null){return}
+
+            this.grabbed = nO;
+            this.vr *= 0.5;
+        }else{
+            const str = (this.r + this.grabbed.r) * this.vr
+
+            this.grabbed.vx+=str*Math.cos(this.rot+1.57)
+            this.grabbed.vy+=str*Math.sin(this.rot+1.57)
+            this.grabbed.vr += this.vr
+
+            this.grabbed = null;
         }
 
     }

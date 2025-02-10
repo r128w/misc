@@ -9,12 +9,16 @@ window.onresize = function(){
 
 var sprites = {
     player: new Image(),
-    smoke: new Image()
+    smoke: new Image(),
+    platforms: [// all textures, referred to by id
+        new Image()
+    ]
 }
 
 function loadSprites(){
     sprites.player.src = "./assets/player.png"
     sprites.smoke.src = "./assets/smoke.png"
+    sprites.platforms[0].src = "./assets/plat-main.png"
 }
 
 var cam = {
@@ -49,6 +53,7 @@ function renderFrame(){
 
     renderParticles()
     renderPlanets()
+    renderPlatforms()
 
     drawSpriteRot(sprites.player, p.x, p.y, p.rot)
 
@@ -156,6 +161,23 @@ function renderMinimap(){
     ctx.setTransform(1, 0, 0, 1, c.width/2, c.height/2)
 
 
+    //platforms, physics objects
+    for(var i = 0; i < pobjects.length; i++){
+        if(pobjects[i] instanceof Player){continue}
+        if(!(pobjects[i] instanceof Platform)){continue}
+        var drawX = xstart
+        var drawY = ystart
+        drawX += minimapWidth/2
+        drawY += minimapWidth/2
+        drawX += pobjects[i].x * minimapScale
+        drawY += pobjects[i].y * minimapScale
+
+        drawX -= worldc.x*minimapScale
+        drawY -= worldc.y*minimapScale
+        drawCircle(drawX - cam.xo, drawY - cam.yo, Math.max(1.5, pobjects[i].r * minimapScale), pobjects[i].col)
+    }
+
+
     // player
     var drawX = xstart
     var drawY = ystart
@@ -167,7 +189,7 @@ function renderMinimap(){
     drawX -= worldc.x*minimapScale
     drawY -= worldc.y*minimapScale
 
-    const drawScale = Math.max(16*minimapScale, 2)
+    const drawScale = Math.max(16*minimapScale, 3)
 
     ctx.beginPath()
     ctx.moveTo(drawX + Math.cos(p.rot)*drawScale*1.5, drawY + Math.sin(p.rot)*drawScale*1.5) // front point is a little extralarge
@@ -178,8 +200,6 @@ function renderMinimap(){
 
     ctx.fillStyle="#ffffff"
     ctx.fill()
-
-    // drawCircle(drawX - cam.xo, drawY - cam.yo, drawScale, '#ffffff')
 
     ctx.restore()
 }
