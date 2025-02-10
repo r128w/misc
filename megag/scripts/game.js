@@ -34,7 +34,7 @@ class Player extends PhysicsObject{
         if(this.landed != null){
             if(input.w){
                 const r2p = Math.atan2(this.y-this.landed.y, this.x-this.landed.x)//rot to planet
-                const launchSpeed = ((input.s ? 2 : 10) * bigG*this.landed.r/(400) + 1.5);
+                const launchSpeed = ((input.s ? 2 : 10) * config.bigG*this.landed.r/(400) + 1.5);
                 // var dir = -(input.a-input.d)
                 this.vx+=launchSpeed*Math.cos(r2p)
                 this.vy+=launchSpeed*Math.sin(r2p)

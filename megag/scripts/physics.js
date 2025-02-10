@@ -1,20 +1,18 @@
 
-var bigG = 0.08;
-const gravLimit = 5000;// beyond this far in either primitive direction, no gravity
 
-function getGravity(x1, y1, x2, y2, distMax=gravLimit){// returns the two multipliers for x and y according to newtons universal law
+function getGravity(x1, y1, x2, y2, distMax=config.gravLimit){// returns the two multipliers for x and y according to newtons universal law
 
     // getGravCube(x1, y1, x2, y2)
 
     // holy moly this math took forever to make
     const dx = x2-x1
     const dy = y2-y1
-    if(dx>gravLimit||dx<-gravLimit||dy>gravLimit||dy<-gravLimit){return{x:0,y:0,d2p:gravLimit}}// no calculation
+    if(dx>config.gravLimit||dx<-config.gravLimit||dy>config.gravLimit||dy<-config.gravLimit){return{x:0,y:0,d2p:config.gravLimit}}// no calculation
     const d2ps = dx*dx+dy*dy
     const d2p = (Math.sqrt(d2ps))// distance to point
     if(d2p>distMax){return {x:0,y:0,d2p:d2p}}// no grav over distmax
     const ood2p = 1/d2p// one over distance to point
-    const ood2ps = bigG/d2ps// one over. included big g bc it needs to be somewhere
+    const ood2ps = config.bigG/d2ps// one over. included big g bc it needs to be somewhere
 
     return {
         x: -ood2ps*dx*ood2p,
@@ -24,34 +22,34 @@ function getGravity(x1, y1, x2, y2, distMax=gravLimit){// returns the two multip
 
 }
 
-function getGravCube(x1, y1, x2, y2){
-    const dx = x2-x1
-    const dy = y2-y1
-    if(dx>gravLimit||dx<-gravLimit||dy>gravLimit||dy<-gravLimit){return{x:0,y:0,d2p:gravLimit}}// no calculation
-    const d2ps = dx*dx+dy*dy
-    const d2p = (Math.sqrt(d2ps))// distance to point
-    const ood2p = 1/d2p// one over distance to point
-    const ood2ps = bigG/d2ps// one over. included big g bc it needs to be somewhere
+// function getGravCube(x1, y1, x2, y2){
+//     const dx = x2-x1
+//     const dy = y2-y1
+//     if(dx>gravLimit||dx<-gravLimit||dy>gravLimit||dy<-gravLimit){return{x:0,y:0,d2p:gravLimit}}// no calculation
+//     const d2ps = dx*dx+dy*dy
+//     const d2p = (Math.sqrt(d2ps))// distance to point
+//     const ood2p = 1/d2p// one over distance to point
+//     const ood2ps = bigG/d2ps// one over. included big g bc it needs to be somewhere
 
-    return {
-        x: -ood2ps*dx*ood2ps*ood2p,
-        y: -ood2ps*dy*ood2ps*ood2p,
-        dist: d2p
-    }
-}
+//     return {
+//         x: -ood2ps*dx*ood2ps*ood2p,
+//         y: -ood2ps*dy*ood2ps*ood2p,
+//         dist: d2p
+//     }
+// }
 
-function getOldGravity(x1, y1, x2, y2){
-    const dx = x2-x1
-    const dy = y2-y1
-    const d2ps = dx*dx+dy*dy
-    const total = bigG / d2ps
+// function getOldGravity(x1, y1, x2, y2){
+//     const dx = x2-x1
+//     const dy = y2-y1
+//     const d2ps = dx*dx+dy*dy
+//     const total = bigG / d2ps
 
-    return {
-        x: -(Math.abs(dx)*dx)/d2ps * total,
-        y: -(Math.abs(dy)*dy)/d2ps * total,
-        dist: Math.sqrt(d2ps)
-    }
-}
+//     return {
+//         x: -(Math.abs(dx)*dx)/d2ps * total,
+//         y: -(Math.abs(dy)*dy)/d2ps * total,
+//         dist: Math.sqrt(d2ps)
+//     }
+// }
 
 var pobjects = []
 
@@ -73,7 +71,7 @@ class PhysicsObject {
         this.rot += this.vr
 
         for(var i = 0; i < planets.length; i ++){
-            const grav = getGravity(this.x, this.y, planets[i].x, planets[i].y, planets[i].r * pGMDF)
+            const grav = getGravity(this.x, this.y, planets[i].x, planets[i].y, planets[i].r * config.planetInfluenceFactor)
             this.vx += -grav.x * planets[i].mass
             this.vy += -grav.y * planets[i].mass
             if(grav.dist<16+planets[i].r){this.landed = planets[i]}

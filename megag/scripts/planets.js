@@ -1,7 +1,5 @@
 var planets = []
 
-const pGMDF = 5;// planet gravity max distance factor
-
 class Planet {
     constructor(x, y, r, col="#99eeaa") {
         this.x = x;

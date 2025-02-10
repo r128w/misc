@@ -108,8 +108,9 @@ function renderMinimap(){
 
         drawCircle(drawX - cam.xo, drawY - cam.yo, planets[i].r * minimapScale, planets[i].col)
 
-        drawCircle(drawX - cam.xo, drawY - cam.yo, planets[i].r * pGMDF * minimapScale, planets[i].col+"11")
-
+        if(config.drawPlanetInfluence){
+            drawCircle(drawX - cam.xo, drawY - cam.yo, planets[i].r * config.planetInfluenceFactor * minimapScale, planets[i].col+"11")
+        }
         // ctx.beginPath()
         // ctx.moveTo(drawX + gravLimit*minimapScale, drawY)
         // ctx.lineTo(drawX, drawY + gravLimit*minimapScale)
@@ -141,7 +142,7 @@ function renderMinimap(){
         var hit = false;
         for(var ii = 0; ii < planets.length; ii ++){
 
-            const grav = getGravity(planets[ii].x, planets[ii].y, cur.x, cur.y, planets[ii].r*pGMDF)
+            const grav = getGravity(planets[ii].x, planets[ii].y, cur.x, cur.y, planets[ii].r*config.planetInfluenceFactor)
 
             cur.vx+= grav.x*planets[ii].mass*factor
             cur.vy+= grav.y*planets[ii].mass*factor
