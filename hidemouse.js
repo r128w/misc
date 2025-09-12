@@ -1,23 +1,24 @@
-const hidecursortagname = "hidecursor"
-const cursortime = 2000
-let cursortimer = null
+
+const hidemouse = {
+    time:2000,
+    timer:null,
+    tagname:"hidecursor",
+    fn:()=>{
+        document.body.style.cursor = 'auto'
+        clearTimeout(hidemouse.timer)
+        hidemouse.timer = setTimeout(()=>{document.body.style.cursor = 'none'}, hidemouse.time)
+    },
+    fnLeave:()=>{
+        document.body.style.cursor = 'auto'
+        clearTimeout(hidemouse.timer)
+    }
+}
 
 document.addEventListener('DOMContentLoaded', ()=>{
-    let eles = document.querySelectorAll("."+hidecursortagname)
+    let eles = document.querySelectorAll("."+hidemouse.tagname)
     for(var i = 0; i < eles.length; i ++){
-        eles[i].addEventListener('mousemove', ()=>{
-            document.body.style.cursor = 'auto'
-            clearTimeout(cursortimer)
-            cursortimer = setTimeout(()=>{document.body.style.cursor = 'none'}, cursortime)
-        })
-        eles[i].addEventListener('mouseup', ()=>{
-            document.body.style.cursor = 'auto'
-            clearTimeout(cursortimer)
-            cursortimer = setTimeout(()=>{document.body.style.cursor = 'none'}, cursortime)
-        })
-        eles[i].addEventListener('mouseleave', ()=>{
-            document.body.style.cursor = 'auto'
-            clearTimeout(cursortimer)
-        })
+        eles[i].addEventListener('mousemove', hidemouse.fn)
+        eles[i].addEventListener('mouseup', hidemouse.fn)
+        eles[i].addEventListener('mouseleave', hidemouse.fnLeave)
     }
 })
