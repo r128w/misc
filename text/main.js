@@ -243,7 +243,7 @@ function act(event){
             break;
         case 12:
             // lasttext=''
-            currenttext="Finally, the end is in sight. You drive down the highway, approaching that beautiful sign: \"Welcome to Cleveland, OH\". The car behind you honks angrily as you slow down, coming to a stop right before that ephemeral guidepost you've sought for so long. You exit the car, and walk up to the sign."
+            currenttext="Finally, the end is in sight. You drive down the highway, approaching that beautiful sign: \"Welcome to Cleveland, OH\". The car behind you honks angrily as you slow down, coming to a stop right before that ephemeral guidepost you've sought for so long. You exit the car and walk up to the sign."
             showOptions(["I reach out and touch it."], [13])
             break;
         case 13:
