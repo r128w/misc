@@ -30,6 +30,11 @@ body{
     font-family:'luminari', monospace;
 }
 
+input{
+    background-color:#222;
+    color:#fff;
+}
+
 a{
     color:#add
 }
