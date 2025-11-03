@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Monte Pissing Sim</title>
+        <link rel="stylesheet" href="../main.css">
+    </head>
+    <body>
+        <script>
+
+            function logThing(a){
+                console.log(a)
+                let p = document.createElement('p')
+                p.textContent = a
+                document.getElementById('output').appendChild(p)
+            }
+
+            function runSim(amount = 5){
+
+                let start = Date.now()
+
+                let pissTime = amount * 0.8
+                let pissFreq = 0.2
+                let simlength = 10000
+
+                let counts = []
+                let occupancy = []
+
+                for(var i = 0; i < amount; i ++){
+                    counts.push(0)
+                    occupancy.push(0)
+                }
+
+                let iteration = 0;
+                while(iteration < simlength){
+                    iteration++
+
+                    // logThing('o'+occupancy)
+
+                    for(var i = 0; i < occupancy.length; i ++){
+                        if(occupancy[i]){
+                            occupancy[i]--
+                        }
+                    }
+
+                    if(Math.random() < pissFreq){// add pisser
+
+                        // logThing('add')
+
+                        let hasPerson = false // anywhere in the urinals
+                        for(var i = 0; i < occupancy.length; i ++){
+                            if(occupancy[i] > 0){hasPerson = true}
+                        }
+
+                        // let selected = Math.random() < 0.5 ? 0 : amount - 1
+                        let selected = 0
+
+                        if(hasPerson){
+                            // find one that is furthest from urinals
+                            let closests = []
+                            for(var i = 0; i < occupancy.length; i ++){
+                                let c = amount
+                                for(var ii = 0; ii < occupancy.length; ii ++){
+                                    if(occupancy[ii] > 0){
+                                        let distance = Math.abs(i - ii)
+
+                                        if(distance < c){c = distance}
+                                    }
+                                }
+
+                                closests.push(c)
+                            }
+
+                            // logThing('c'+closests)
+                            // find highest
+                            // let maxinds = [-1]
+                            // for(var i = 0; i < closests.length; i ++){
+                            //     if((closests[maxinds[0]] || 0) <= closests[i] && closests[i] != 0){
+                            //         if(closests[maxinds[0]] == closests[i]){
+                            //             maxinds.push(i)
+                            //         }else{
+                            //             maxinds = [i]
+                            //         }
+                            //     }
+                            // }
+
+                            // selected=maxinds[Math.trunc(Math.random()*maxinds.length)]
+                            let maxind = -1
+                            for(var i = 0; i < closests.length; i ++){
+                                if((closests[maxind] || 0) < closests[i] && closests[i] != 0){
+                                    maxind=i
+                                }
+                            }
+
+                            selected=maxind
+                        }
+
+                        if(selected != -1){
+                            occupancy[selected] = pissTime
+                            counts[selected] ++
+                        }
+
+                    }
+
+                }
+
+                logThing(`${amount} urinals done in ${Math.trunc(Date.now()-start)/1000}s`)
+                plotToCanvas(counts)
+
+
+            }
+        </script>
+
+        <h4>Urinal Use Distribution Monte Carlo Simulation</h4>
+        <span>Amount: </span><input type="number" id="amount-input" value="8">
+        <button onclick="runSim(document.getElementById('amount-input').value)">Run Sim</button>
+
+        <button onclick="animation(2, document.getElementById('amount-input').value, 50)">Run Anim</button>
+
+        <button onclick="document.getElementById('output').textContent = ''; plotToCanvas([])">Clear Log</button>
+
+        <script>
+            function animation(current, upto, interval){
+                if(upto > 200){alert('nah bro'); return}
+                if(current > upto){return}
+                runSim(current)
+                setTimeout(()=>{animation(current+1, upto, interval)}, interval)
+            }
+        </script>
+
+        <h3>Distribution</h3>
+        <canvas id="main-canvas" style="width:80vw;margin:20px;height:150px"></canvas>
+        <script>
+            function plotToCanvas(data){
+                const c = document.getElementById('main-canvas')
+                const ctx = c.getContext('2d')
+                c.width = c.clientWidth
+                c.height = c.clientHeight
+
+                ctx.fillStyle = "#000000"
+                ctx.fillRect(0, 0, c.width, c.height)
+
+                ctx.fillStyle="#ffffff"
+
+                let w = c.width / data.length
+                let sum = 0
+                data.forEach((v)=>{if(sum<v){sum=v}})
+
+                for(var i = 0; i < data.length; i ++){
+                    ctx.fillRect(w*i, c.height, w, c.height*-data[i]/sum)
+                }
+
+            }
+
+            plotToCanvas([])
+        </script>
+
+        <p id="output"></p>
+
+    </body>
+</html>
